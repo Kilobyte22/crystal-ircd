@@ -1,0 +1,3 @@
+deps do
+  github "RX14/fast-irc.cr"
+end
