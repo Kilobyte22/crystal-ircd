@@ -21,9 +21,9 @@ module IRCd
       @nick
     end
 
-    def receive_from(src, msg)
+    def receive_message(msg)
       # TODO: Possibly abstract this?
-      @connection.send src, "PRIVMSG", msg.target.name, msg.message
+      @connection.send msg.sender, "PRIVMSG", @nick, msg.content
     end
 
     def to_prefix

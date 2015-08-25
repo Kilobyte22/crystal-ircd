@@ -14,9 +14,7 @@ module IRCd
         while msg = @socket.gets
           begin
             puts "MSG: #{msg}"
-            parsed_msg = FastIrc::Message.parse(msg.chomp)
-            puts parsed_msg.inspect
-            handle_command(parsed_msg)
+            handle_command(FastIrc::Message.parse(msg.chomp))
           rescue e
             puts e
             puts e.backtrace.join("\n")
@@ -26,13 +24,14 @@ module IRCd
     end
 
     def send(message: FastIrc::Message)
+      puts "actually sending it"
       message.to_s(@socket)
-      @socket.write("\n")
+      @socket << '\n'
       @socket.flush
     end
 
     def send(sender: MessageSource?, command: String|Int, params: Array(String))
-      FastIrc::Message.new(sender.try &.to_prefix, command.to_s, params)
+      send FastIrc::Message.new(sender.try &.to_prefix, command.to_s, params)
     end
 
     def send(sender: MessageSource?, command: String|Int, *params: String)
@@ -53,9 +52,9 @@ module IRCd
       end
     end
 
-    private def ensure_auth(value, &block)
+    private def ensure_auth(value)
       if @authenticated == value
-        block.call
+        yield
       elsif value
         send @server, 451, "*", "You have not registered"
       else
@@ -76,7 +75,7 @@ module IRCd
             target = @server.target(params[0])
             if target
               target.can_receive_from? @user.not_nil!
-              target.receive_from @user.not_nil!, IRCd::Message.new(target, params[1])
+              target.receive_message IRCd::Message.new(@user.not_nil!, params[1])
             else
               send @server, 401, "No such nick/channel"
             end
@@ -116,6 +115,7 @@ module IRCd
           @name = nick
           @authenticated = true
           @server.introduce_user user
+          @user = user
           send @server, "001", @name, "Welcome to this in crystal written IRC server"
           send @server, 422, @name, "This server does not yet support MOTDs"
         end
