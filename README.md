@@ -4,19 +4,9 @@ TODO: Write a description here for library
 
 ## Installation
 
-Add it to `Projectfile`
-
-```crystal
-deps do
-  github "[your-github-name]/ircd"
-end
-```
+This is a binary. Clone this repo, compile the code and run the binary.
 
 ## Usage
-
-```crystal
-require "ircd"
-```
 
 TODO: Write usage here for library
 
@@ -34,4 +24,4 @@ TODO: Write instructions for development
 
 ## Contributors
 
-- [your-github-name](https://github.com/[your-github-name]) Stephan Henrichs - creator, maintainer
+- [Kilobyte22](https://github.com/Kilobyte22) Stephan Henrichs - creator, maintainer
